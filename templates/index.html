@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BLBS AI Agent</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { text-align: center; color: #2c3e50; margin-bottom: 30px; }
+        .nav { display: flex; gap: 10px; margin-bottom: 20px; }
+        .nav a { padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 4px; }
+        .nav a:hover { background: #2980b9; }
+        .status { padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .status.ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="header">🚀 BLBS AI Agent - Web Verzija</h1>
+        
+        <div class="nav">
+            <a href="/mysql">MySQL Konfiguracija</a>
+            <a href="/vertex">Vertex AI Konfiguracija</a>
+            <a href="/reports">AI Izveštaji</a>
+        </div>
+        
+        <h2>Status Konfiguracije</h2>
+        
+        <div class="status {% if mysql_configured %}ok{% else %}error{% endif %}">
+            <strong>MySQL:</strong> 
+            {% if mysql_configured %}
+                ✅ Konfigurisan
+            {% else %}
+                ❌ Nije konfigurisan
+            {% endif %}
+        </div>
+        
+        <div class="status {% if vertex_configured %}ok{% else %}error{% endif %}">
+            <strong>Vertex AI:</strong> 
+            {% if vertex_configured %}
+                ✅ Konfigurisan  
+            {% else %}
+                ❌ Nije konfigurisan
+            {% endif %}
+        </div>
+        
+        {% if mysql_configured and vertex_configured %}
+        <div class="status ok">
+            <strong>🎉 Sve je konfigurisano!</strong> Možete koristiti AI izveštaje.
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

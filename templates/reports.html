@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Izveštaji - BLBS AI Agent</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        textarea, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { padding: 10px 20px; margin: 5px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2980b9; }
+        .back { background: #95a5a6; }
+        .back:hover { background: #7f8c8d; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .report { background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; margin: 15px 0; border-radius: 4px; white-space: pre-wrap; font-family: monospace; min-height: 200px; }
+        .controls { display: flex; gap: 10px; align-items: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 AI Izveštaji</h1>
+        
+        <div class="form-group">
+            <label for="sqlQuery">SQL upit za analizu:</label>
+            <textarea id="sqlQuery" rows="5" placeholder="SELECT * FROM tickets LIMIT 10;">SELECT * FROM tickets LIMIT 10;</textarea>
+        </div>
+        
+        <div class="controls">
+            <label for="reportType">Tip izveštaja:</label>
+            <select id="reportType">
+                <option value="osnovni">Osnovni</option>
+                <option value="detaljni">Detaljni</option>
+                <option value="statistički">Statistički</option>
+                <option value="trend analiza">Trend analiza</option>
+            </select>
+            
+            <button onclick="generateReport()">Generiši Izveštaj</button>
+            <button class="back" onclick="location.href='/'">Nazad</button>
+        </div>
+        
+        <div id="message"></div>
+        
+        <div class="form-group">
+            <label>AI Izveštaj:</label>
+            <div id="report" class="report">Ovde će se prikazati AI izveštaj...</div>
+        </div>
+    </div>
+
+    <script>
+        function generateReport() {
+            const sqlQuery = document.getElementById('sqlQuery').value.trim();
+            const reportType = document.getElementById('reportType').value;
+            const reportDiv = document.getElementById('report');
+            const messageDiv = document.getElementById('message');
+            
+            if (!sqlQuery) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Unesite SQL upit!';
+                return;
+            }
+            
+            reportDiv.textContent = 'Generiram izveštaj...⏳ Molimo sačekajte...';
+            messageDiv.textContent = '';
+            
+            fetch('/reports/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    sql_query: sqlQuery,
+                    report_type: reportType
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    reportDiv.textContent = result.report;
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = 'Izveštaj je uspešno generisan!';
+                } else {
+                    reportDiv.textContent = 'Greška pri generisanju izveštaja.';
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = result.message;
+                }
+            })
+            .catch(error => {
+                reportDiv.textContent = 'Greška pri komunikaciji sa serverom.';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Greška: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>
